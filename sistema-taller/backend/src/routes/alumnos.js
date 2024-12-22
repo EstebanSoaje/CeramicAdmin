@@ -93,6 +93,24 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Ruta para obtener estadísticas del Dashboard
+router.get("/estadisticas", async (req, res) => {
+  try {
+    const totalAlumnos = await Alumno.countDocuments();
+    const pagosPendientes = await Alumno.countDocuments({ "pagos.pagado": false });
+    const alumnosAlDia = totalAlumnos - pagosPendientes;
+
+    res.json({
+      totalAlumnos,
+      pagosPendientes,
+      alumnosAlDia,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener estadísticas");
+  }
+});
+
 
 
 module.exports = router;
