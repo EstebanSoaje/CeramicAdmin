@@ -3,6 +3,7 @@ const Alumno = require('../models/alumnos');
 const router = express.Router();
 const { validarAlumno } = require('../validations/alumnoValidation'); // Validación Joi
 
+//crear alumno
 router.post('/crear', async (req, res) => {
   // Validar el cuerpo de la solicitud
   const { error } = validarAlumno(req.body);
@@ -108,6 +109,33 @@ router.get("/estadisticas", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Error al obtener estadísticas");
+  }
+});
+
+// Obtener el historial de pagos de un alumno por ID
+router.get('/:id/pagos', async (req, res) => {
+  try {
+    const alumno = await Alumno.findById(req.params.id);
+    if (!alumno) {
+      return res.status(404).json({ mensaje: 'Alumno no encontrado' });
+    }
+    res.json(alumno.pagos);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener los pagos del alumno' });
+  }
+});
+
+//agregar pago de alumno
+router.post('/alumnos/:id/pagos', async (req, res) => {
+  const { id } = req.params;
+  const nuevoPago = req.body; // { mes, monto, pagado, fechaPago }
+  try {
+    const alumno = await Alumno.findById(id);
+    alumno.pagos.push(nuevoPago);
+    await alumno.save();
+    res.status(200).json(alumno.pagos);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al agregar el pago' });
   }
 });
 
