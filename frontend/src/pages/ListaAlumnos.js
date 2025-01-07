@@ -80,13 +80,13 @@ const ListaAlumnos = () => {
         </tbody>
       </table>
       <div className="mt-4">
-              <Link to="/agregar-alumno" className="btn btn-primary mr-2">
-                Agregar Alumno
-              </Link>
-              <Link to="/" className="btn btn-secondary">
-                Ir al Dashboard
-              </Link>
-            </div>
+        <Link to="/agregar-alumno" className="btn btn-primary mr-2">
+          Agregar Alumno
+        </Link>
+        <Link to="/" className="btn btn-secondary">
+          Ir al Dashboard
+        </Link>
+      </div>
     </div>
   );
   

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import { Link } from "react-router-dom";
 const AgregarAlumno = () => {
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
@@ -25,41 +25,49 @@ const AgregarAlumno = () => {
       setMensaje("Error al agregar alumno. Inténtalo nuevamente.");
     }
   };
-
-  return (
-    <div>
+return (
+    <div className="container">
       <h2>Agregar Alumno</h2>
+      {mensaje && <p>{mensaje}</p>}
       <form onSubmit={manejarSubmit}>
-        <div>
-          <label>Nombre:</label>
+        <div className="mb-3">
+          <label className="form-label">Nombre</label>
           <input
             type="text"
+            className="form-control"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label>Apellido:</label>
+        <div className="mb-3">
+          <label className="form-label">Apellido</label>
           <input
             type="text"
+            className="form-control"
             value={apellido}
             onChange={(e) => setApellido(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label>Contacto:</label>
+        <div className="mb-3">
+          <label className="form-label">Contacto</label>
           <input
             type="text"
+            className="form-control"
             value={contacto}
             onChange={(e) => setContacto(e.target.value)}
             required
           />
         </div>
-        <button type="submit">Agregar Alumno</button>
+        <button type="submit" className="btn btn-primary">Guardar Cambios</button>
       </form>
-      {mensaje && <p>{mensaje}</p>}
+      <div className="mt-4">
+        <Link to="/lista-alumnos" className="btn btn-secondary mr-2">
+          Lista de alumnos
+        </Link>
+       
+      </div>
     </div>
   );
 };

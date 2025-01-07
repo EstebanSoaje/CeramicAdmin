@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 const EditarAlumno = () => {
   const { id } = useParams(); // Para obtener el ID del alumno desde la URL
   const navigate = useNavigate(); // Para redirigir después de editar
@@ -79,6 +79,12 @@ const EditarAlumno = () => {
         </div>
         <button type="submit" className="btn btn-primary">Guardar Cambios</button>
       </form>
+      <div className="mt-4">
+        <Link to="/lista-alumnos" className="btn btn-secondary mr-2">
+          Cancelar
+        </Link>
+       
+      </div>
     </div>
   );
 };

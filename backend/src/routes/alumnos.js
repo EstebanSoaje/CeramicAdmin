@@ -113,9 +113,9 @@ router.get("/estadisticas", async (req, res) => {
 });
 
 // Obtener el historial de pagos de un alumno por ID
-router.get('/:id/pagos', async (req, res) => {
+router.get('/:idAlumno/pagos', async (req, res) => {
   try {
-    const alumno = await Alumno.findById(req.params.id);
+    const alumno = await Alumno.findById(req.params.idAlumno);
     if (!alumno) {
       return res.status(404).json({ mensaje: 'Alumno no encontrado' });
     }
@@ -125,20 +125,78 @@ router.get('/:id/pagos', async (req, res) => {
   }
 });
 
-//agregar pago de alumno
-router.post('/alumnos/:id/pagos', async (req, res) => {
-  const { id } = req.params;
-  const nuevoPago = req.body; // { mes, monto, pagado, fechaPago }
+// Agregar un pago a un alumno
+router.post('/agregar-pago/:idAlumno', async (req, res) => {
   try {
-    const alumno = await Alumno.findById(id);
+    const { idAlumno } = req.params; // ID del alumno
+    const nuevoPago = req.body; // Datos del pago
+
+    const alumno = await Alumno.findById(idAlumno);
+    if (!alumno) {
+      return res.status(404).json({ message: 'Alumno no encontrado' });
+    }
+
     alumno.pagos.push(nuevoPago);
     await alumno.save();
-    res.status(200).json(alumno.pagos);
+
+    res.status(200).json({ message: 'Pago agregado correctamente', alumno });
   } catch (error) {
-    res.status(500).json({ error: 'Error al agregar el pago' });
+    res.status(500).json({ message: 'Error al agregar el pago', error });
   }
 });
 
+//Editar pago de alumno
+router.put('/alumnos/editar-pago/:idAlumno/:_id', async (req, res) => {
+  try {
+    const { idAlumno, _id } = req.params;
+    const { mes, monto, pagado, fechaPago } = req.body;
+
+    const alumno = await Alumno.findById(idAlumno);
+    if (!alumno) {
+      return res.status(404).json({ mensaje: 'Alumno no encontrado' });
+    }
+
+    const pago = alumno.pagos.id(_id);
+    if (!pago) {
+      return res.status(404).json({ mensaje: 'Pago no encontrado' });
+    }
+
+    pago.mes = mes;
+    pago.monto = monto;
+    pago.pagado = pagado;
+    pago.fechaPago = fechaPago;
+
+    await alumno.save();
+    res.json({ mensaje: 'Pago actualizado correctamente', alumno });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al editar el pago', error });
+  }
+});
+
+// Eliminar pago alumno
+router.delete('/eliminar-pago/:idAlumno/:idPago', async (req, res) => {
+  try {
+    const { idAlumno, idPago } = req.params;
+
+    console.log("ID del Alumno recibido:", idAlumno);
+    console.log("ID del Pago recibido:", idPago);
+
+    const alumno = await Alumno.findByIdAndUpdate(
+      idAlumno,
+      { $pull: { pagos: { _id: idPago } } }, // Eliminamos el pago con el ID proporcionado
+      { new: true } // Para devolver el documento actualizado
+    );
+
+    if (!alumno) {
+      return res.status(404).json({ mensaje: 'Alumno no encontrado' });
+    }
+
+    res.json({ mensaje: 'Pago eliminado correctamente', alumno });
+  } catch (error) {
+    console.error('Error al eliminar el pago:', error); // Registrar el error
+    res.status(500).json({ mensaje: 'Error al eliminar el pago', error: error.message });
+  }
+});
 
 
 module.exports = router;
