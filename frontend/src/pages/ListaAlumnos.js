@@ -61,12 +61,16 @@ const ListaAlumnos = () => {
                 <Link to={`/editar-alumno/${alumno._id}`} className="btn btn-warning btn-sm mr-2">
                   Editar
                 </Link>
+                <Link to={`/asistencias/${alumno._id}`} className="btn btn-info btn-sm">
+                  Ver Asistencias
+                </Link>
                 <button
                   className="btn btn-secondary"
                   onClick={() => navigate(`/historial-pagos/${alumno._id}`)}
                 >
                   Ver Historial
                 </button>
+
                 <button
                   className="btn btn-danger btn-sm"
                   onClick={() => handleEliminar(alumno._id)}

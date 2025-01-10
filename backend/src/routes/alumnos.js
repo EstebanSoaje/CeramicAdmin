@@ -146,7 +146,7 @@ router.post('/agregar-pago/:idAlumno', async (req, res) => {
 });
 
 //Editar pago de alumno
-router.put('/alumnos/editar-pago/:idAlumno/:_id', async (req, res) => {
+router.put('/editar-pago/:idAlumno/:_id', async (req, res) => {
   try {
     const { idAlumno, _id } = req.params;
     const { mes, monto, pagado, fechaPago } = req.body;
@@ -198,5 +198,66 @@ router.delete('/eliminar-pago/:idAlumno/:idPago', async (req, res) => {
   }
 });
 
+// Registrar asistencia de un alumno
+router.post('/asistencias/:idAlumno', async (req, res) => {
+  try {
+    const { idAlumno } = req.params;
+    const { fecha } = req.body;
+
+    const alumno = await Alumno.findById(idAlumno);
+    if (!alumno) {
+      return res.status(404).json({ mensaje: 'Alumno no encontrado' });
+    }
+
+    alumno.asistencias.push({ fecha });
+    await alumno.save();
+
+    res.json({ mensaje: 'Asistencia registrada correctamente', alumno });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al registrar la asistencia', error });
+  }
+});
+
+// Obtener asistencias de un alumno
+router.get('/asistencias/:idAlumno', async (req, res) => {
+  try {
+    const { idAlumno } = req.params;
+
+    const alumno = await Alumno.findById(idAlumno);
+    if (!alumno) {
+      return res.status(404).json({ mensaje: 'Alumno no encontrado' });
+    }
+
+    res.json({ asistencias: alumno.asistencias });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener asistencias', error });
+  }
+});
+
+// Eliminar una asistencia de alumno
+router.delete('/asistencias/:idAlumno/:idAsistencia', async (req, res) => {
+  try {
+    const { idAlumno, idAsistencia } = req.params;
+
+    const alumno = await Alumno.findById(idAlumno);
+    if (!alumno) {
+      return res.status(404).json({ mensaje: 'Alumno no encontrado' });
+    }
+
+    const asistenciaIndex = alumno.asistencias.findIndex(
+      (asistencia) => asistencia._id.toString() === idAsistencia
+    );
+    if (asistenciaIndex === -1) {
+      return res.status(404).json({ mensaje: 'Asistencia no encontrada' });
+    }
+
+    alumno.asistencias.splice(asistenciaIndex, 1);
+    await alumno.save();
+
+    res.json({ mensaje: 'Asistencia eliminada correctamente', alumno });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al eliminar la asistencia', error });
+  }
+});
 
 module.exports = router;
