@@ -199,6 +199,9 @@ router.delete('/eliminar-pago/:idAlumno/:idPago', async (req, res) => {
 });
 
 // Registrar asistencia de un alumno
+const moment = require('moment');
+
+// Registrar asistencia de un alumno
 router.post('/asistencias/:idAlumno', async (req, res) => {
   try {
     const { idAlumno } = req.params;
@@ -209,7 +212,10 @@ router.post('/asistencias/:idAlumno', async (req, res) => {
       return res.status(404).json({ mensaje: 'Alumno no encontrado' });
     }
 
-    alumno.asistencias.push({ fecha });
+    // Convertir fecha recibida de UTC-3 a UTC
+    const fechaUTC = moment(fecha).utc().toDate();
+
+    alumno.asistencias.push({ fecha: fechaUTC });
     await alumno.save();
 
     res.json({ mensaje: 'Asistencia registrada correctamente', alumno });
@@ -228,13 +234,24 @@ router.get('/asistencias/:idAlumno', async (req, res) => {
       return res.status(404).json({ mensaje: 'Alumno no encontrado' });
     }
 
-    res.json({ asistencias: alumno.asistencias });
+    // Ordenar las asistencias por fecha en orden descendente
+    const asistenciasOrdenadas = alumno.asistencias
+      .slice() // Crear una copia del array para no mutar el original
+      .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+    // Convertir fechas de asistencias de UTC a UTC-3
+    const asistenciasConZonaHoraria = asistenciasOrdenadas.map((asistencia) => ({
+      ...asistencia.toObject(),
+      fecha: moment(asistencia.fecha).utcOffset('-03:00').format('YYYY-MM-DD'),
+    }));
+
+    res.json({ asistencias: asistenciasConZonaHoraria });
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al obtener asistencias', error });
   }
 });
 
-// Eliminar una asistencia de alumno
+// Eliminar asistencia de un alumno
 router.delete('/asistencias/:idAlumno/:idAsistencia', async (req, res) => {
   try {
     const { idAlumno, idAsistencia } = req.params;
