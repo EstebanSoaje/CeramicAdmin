@@ -13,7 +13,11 @@ const AlumnoSchema = new mongoose.Schema({
       fechaPago: { type: Date },
     },
   ],
+  asistencias: [
+    {
+      fecha: { type: Date, required: true },
+    },
+  ],
 });
 
-const Alumno = mongoose.model('Alumno', AlumnoSchema);
-module.exports = Alumno;
+module.exports = mongoose.model('Alumno', AlumnoSchema);
