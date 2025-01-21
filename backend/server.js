@@ -18,6 +18,16 @@ app.listen(PORT, () => {
 const alumnosRoutes = require('./src/routes/alumnos');
 app.use('/api/alumnos', alumnosRoutes);
 
+const asistenciaRoutes = require('./routes/asistencia');
+app.use('/api/asistencias', asistenciaRoutes);
+
+const pagoRoutes = require('./routes/pago');
+app.use('/api/pagos', pagoRoutes);
+
+const planRoutes = require('./routes/plan');
+app.use('/api/planes', planRoutes);
+
+
 // Conectar a la base de datos
 connectDB();
 
