@@ -15,8 +15,18 @@ app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
 
-const alumnosRoutes = require('./src/routes/alumnos');
+const alumnosRoutes = require('./src/routes/alumno');
 app.use('/api/alumnos', alumnosRoutes);
+
+const asistenciaRoutes = require('./src/routes/asistencia');
+app.use('/api/asistencia', asistenciaRoutes);
+
+const pagoRoutes = require('./src/routes/pago');
+app.use('/api/pagos', pagoRoutes);
+
+const planRoutes = require('./src/routes/plan');
+app.use('/api/planes', planRoutes);
+
 
 // Conectar a la base de datos
 connectDB();

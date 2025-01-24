@@ -65,10 +65,10 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="mt-4">
-        <Link to="/agregar-alumno" className="btn btn-primary mr-2">
+        <Link to="/alumno/crear" className="btn btn-primary mr-2">
           Agregar Alumno
         </Link>
-        <Link to="/lista-alumnos" className="btn btn-secondary">
+        <Link to="/alumnos" className="btn btn-secondary">
           Ver Lista de Alumnos
         </Link>
       </div>
