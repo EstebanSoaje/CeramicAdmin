@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const Alumno = require('../models/alumno');
-const Pago = require('../models/pago');
-const Asistencia = require('../models/asistencia');
 
 // Crear un alumno
 router.post('/crear', async (req, res) => {

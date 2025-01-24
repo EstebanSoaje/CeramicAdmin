@@ -1,12 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
-import ListaAlumnos from './pages/ListaAlumnos';
-import AgregarAlumno from './pages/AgregarAlumno';
+import ListarAlumnos from './pages/ListarAlumnos';
+import CrearAlumno from './pages/CrearAlumno';
 import EditarAlumno from './pages/EditarAlumno';
 import HistorialPagos from './pages/HistorialPagos';
 import Navbar from './component/navbar';
 import ControlAsistencias from './pages/ControlAsistencias';
+import VerAlumno from "./pages/VerAlumno";
+
 
 
 const App = () => {
@@ -16,10 +18,10 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/alumnos" element={<ListaAlumnos />} />
-        <Route path="/agregar-alumno" element={<AgregarAlumno />} />
-        <Route path="/lista-alumnos" element={<ListaAlumnos />} />
-        <Route path="/editar-alumno/:id" element={<EditarAlumno />} />
+        <Route path="/alumnos" element={<ListarAlumnos />} />
+        <Route path="/alumnos/:id" element={<VerAlumno />} />
+        <Route path="/alumno/crear" element={<CrearAlumno />} />
+        <Route path="/alumno/editar/:id" element={<EditarAlumno />} />
         <Route path="/historial-pagos/:id" element={<HistorialPagos />} />
         <Route path="/asistencias/:id" element={<ControlAsistencias />} />
       </Routes>

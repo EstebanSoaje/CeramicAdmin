@@ -1,116 +1,105 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const EditarAlumno = () => {
-  const { id } = useParams(); // ID del alumno a editar
+const CrearAlumno = () => {
   const navigate = useNavigate();
-  const [alumno, setAlumno] = useState({
+  const [formulario, setFormulario] = useState({
     nombre: "",
     apellido: "",
     email: "",
     telefono: "",
   });
-  const [loading, setLoading] = useState(true);
 
-  // Obtener datos del alumno al cargar la vista
-  useEffect(() => {
-    const fetchAlumno = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/api/alumnos/${id}`);
-        setAlumno(response.data.alumno); // Prellenar los datos
-        setLoading(false);
-      } catch (error) {
-        console.error("Error al obtener el alumno:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchAlumno();
-  }, [id]);
+  const [error, setError] = useState("");
 
   // Manejar cambios en el formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setAlumno({ ...alumno, [name]: value });
+    setFormulario({ ...formulario, [name]: value });
   };
 
-  // Enviar los datos actualizados
+  // Manejar envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      await axios.put(`http://localhost:5000/api/alumnos/${id}`, alumno);
-      alert("Alumno actualizado con éxito");
-      navigate("/alumnos"); // Redirigir a la lista de alumnos
-    } catch (error) {
-      console.error("Error al actualizar el alumno:", error);
+      await axios.post("http://localhost:5000/api/alumnos/crear", formulario);
+      navigate("/alumnos"); // Redirigir a la lista de alumnos después de crear
+    } catch (err) {
+      console.error("Error al crear el alumno:", err);
+      setError("Hubo un problema al crear el alumno. Intenta nuevamente.");
     }
   };
 
-  if (loading) return <p>Cargando datos del alumno...</p>;
-
   return (
     <div className="container mt-4">
-      <h1>Editar Alumno</h1>
-      <form onSubmit={handleSubmit}>
+      <h1>Crear Alumno</h1>
+      <form onSubmit={handleSubmit} className="mt-3">
+        {error && <div className="alert alert-danger">{error}</div>}
+
         <div className="mb-3">
           <label htmlFor="nombre" className="form-label">
-            Nombre
+            Nombre:
           </label>
           <input
             type="text"
-            className="form-control"
             id="nombre"
             name="nombre"
-            value={alumno.nombre}
+            className="form-control"
+            value={formulario.nombre}
             onChange={handleChange}
             required
           />
         </div>
+
         <div className="mb-3">
           <label htmlFor="apellido" className="form-label">
-            Apellido
+            Apellido:
           </label>
           <input
             type="text"
-            className="form-control"
             id="apellido"
             name="apellido"
-            value={alumno.apellido}
+            className="form-control"
+            value={formulario.apellido}
             onChange={handleChange}
             required
           />
         </div>
+
         <div className="mb-3">
           <label htmlFor="email" className="form-label">
-            Email
+            Email:
           </label>
           <input
             type="email"
-            className="form-control"
             id="email"
             name="email"
-            value={alumno.email}
+            className="form-control"
+            value={formulario.email}
             onChange={handleChange}
             required
           />
         </div>
+
         <div className="mb-3">
           <label htmlFor="telefono" className="form-label">
-            Teléfono
+            Teléfono:
           </label>
           <input
             type="number"
-            className="form-control"
             id="telefono"
             name="telefono"
-            value={alumno.telefono}
+            className="form-control"
+            value={formulario.telefono}
             onChange={handleChange}
             required
           />
         </div>
+
         <button type="submit" className="btn btn-primary">
-          Guardar Cambios
+          Crear Alumno
         </button>
         <button
           type="button"
@@ -124,4 +113,4 @@ const EditarAlumno = () => {
   );
 };
 
-export default EditarAlumno;
+export default CrearAlumno;
