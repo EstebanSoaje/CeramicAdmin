@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-
+import CrearAsistencia from '../component/CrearAsistencia'
 const Dashboard = () => {
   const [stats, setStats] = React.useState({
     totalAlumnos: 0,
@@ -64,13 +64,16 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <div className="mt-4">
+      <div className="mt-2">
         <Link to="/alumno/crear" className="btn btn-primary mr-2">
           Agregar Alumno
         </Link>
         <Link to="/alumnos" className="btn btn-secondary">
           Ver Lista de Alumnos
         </Link>
+      </div>
+      <div className="mt-2">
+        <CrearAsistencia/>
       </div>
     </div>
   );

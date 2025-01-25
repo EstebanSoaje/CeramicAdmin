@@ -10,7 +10,6 @@ import ControlAsistencias from './pages/ControlAsistencias';
 import VerAlumno from "./pages/VerAlumno";
 
 
-
 const App = () => {
   return (
     <Router>

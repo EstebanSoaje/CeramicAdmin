@@ -11,7 +11,7 @@ const VerAlumno = () => {
     const fetchAlumno = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/alumnos/${id}`);
-        setAlumno(response.data.alumno); // Asegúrate de que el backend envíe un objeto `alumno`
+        setAlumno(response.data); // Asegúrate de que el backend envíe un objeto `alumno`
         console.log(alumno);
         setLoading(false);
       } catch (error) {
@@ -42,7 +42,7 @@ const VerAlumno = () => {
       </div>
       <div className="mt-4">
         <Link to="/alumnos" className="btn btn-secondary me-2">Volver</Link>
-        <Link to={`/alumnos/editar/${id}`} className="btn btn-primary">Editar Alumno</Link>
+        <Link to={`/alumno/editar/${id}`} className="btn btn-primary">Editar Alumno</Link>
       </div>
     </div>
   );

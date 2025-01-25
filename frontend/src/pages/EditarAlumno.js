@@ -18,7 +18,8 @@ const EditarAlumno = () => {
     const fetchAlumno = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/alumnos/${id}`);
-        setAlumno(response.data.alumno); // Prellenar los datos
+        setAlumno(response.data); // Prellenar los datos
+        console.log(response.data);
         setLoading(false);
       } catch (error) {
         console.error("Error al obtener el alumno:", error);

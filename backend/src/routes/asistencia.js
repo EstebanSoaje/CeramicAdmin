@@ -7,21 +7,26 @@ const Asistencia = require('../models/asistencia');
 router.post('/:idAlumno', async (req, res) => {
   try {
     const { idAlumno } = req.params;
-    const { fecha, molde } = req.body;
+    const { fecha, molde, observaciones } = req.body;
 
+    // Verificar que el alumno exista
     const alumno = await Alumno.findById(idAlumno);
     if (!alumno) {
       return res.status(404).json({ mensaje: 'Alumno no encontrado' });
     }
 
+    // Crear la nueva asistencia
     const nuevaAsistencia = new Asistencia({
       fecha,
       molde,
+      observaciones,
+      alumno: idAlumno, // Relación con el alumno
     });
 
+    // Guardar la asistencia
     const asistenciaGuardada = await nuevaAsistencia.save();
 
-    // Agregar la asistencia al alumno
+    // Agregar la asistencia al array del alumno
     alumno.asistencias.push(asistenciaGuardada._id);
     await alumno.save();
 
@@ -30,9 +35,11 @@ router.post('/:idAlumno', async (req, res) => {
       asistencia: asistenciaGuardada,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ mensaje: 'Error al registrar la asistencia', error });
   }
 });
+
 
 // Obtener todas las asistencias de un alumno
 router.get('/:idAlumno', async (req, res) => {
