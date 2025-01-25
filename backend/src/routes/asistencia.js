@@ -85,4 +85,39 @@ router.delete('/:idAlumno/:idAsistencia', async (req, res) => {
   }
 });
 
+// Obtener asistencias con filtros opcionales
+router.get("/", async (req, res) => {
+  try {
+    const { alumno, fechaInicio, fechaFin } = req.query;
+
+    // Construir el filtro dinámico
+    const filtro = {};
+
+    // Filtrar por alumno si está presente
+    if (alumno) {
+      filtro.alumno = alumno;
+    }
+
+    // Filtrar por rango de fechas si están presentes
+    if (fechaInicio || fechaFin) {
+      filtro.fecha = {};
+      if (fechaInicio) {
+        filtro.fecha.$gte = new Date(fechaInicio); // Fecha mayor o igual
+      }
+      if (fechaFin) {
+        filtro.fecha.$lte = new Date(fechaFin); // Fecha menor o igual
+      }
+    }
+
+    // Buscar asistencias con el filtro y poblar datos del alumno
+    const asistencias = await Asistencia.find(filtro).populate("alumno", "nombre apellido");
+
+    res.status(200).json(asistencias);
+  } catch (error) {
+    console.error("Error al obtener asistencias:", error);
+    res.status(500).json({ mensaje: "Error al obtener asistencias", error });
+  }
+});
+
+
 module.exports = router;
