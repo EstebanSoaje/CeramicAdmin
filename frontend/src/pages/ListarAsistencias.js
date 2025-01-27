@@ -53,6 +53,14 @@ const ListarAsistencias = () => {
     }
   };
 
+  const formatearFechaUTC = (fecha) => {
+    const date = new Date(fecha);
+    const dia = date.getUTCDate().toString().padStart(2, '0'); // Día en UTC
+    const mes = (date.getUTCMonth() + 1).toString().padStart(2, '0'); // Mes en UTC (0 indexado)
+    const anio = date.getUTCFullYear(); // Año en UTC
+    return `${dia}/${mes}/${anio}`;
+  };
+
   if (loading) return <p>Cargando asistencias...</p>;
 
   return (
@@ -129,11 +137,12 @@ const ListarAsistencias = () => {
           </thead>
           <tbody>
             {asistencias.map((asistencia) => (
+              console.log(asistencia.fecha),
               <tr key={asistencia._id}>
                 <td>
                   {asistencia.alumno.nombre} {asistencia.alumno.apellido}
                 </td>
-                <td>{new Date(asistencia.fecha).toLocaleDateString()}</td>
+                <td>{formatearFechaUTC(asistencia.fecha)}</td>
                 <td>{asistencia.molde}</td>
                 <td>{asistencia.observaciones || "N/A"}</td>
               </tr>
