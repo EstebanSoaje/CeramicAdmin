@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import EditarAsistencia from "./EditarAsistencia";
+import { useNavigate } from "react-router-dom";
 
 const ListarAsistencias = () => {
   const [asistencias, setAsistencias] = useState([]);
@@ -9,12 +11,15 @@ const ListarAsistencias = () => {
   const [fechaFin, setFechaFin] = useState("");
   const [loading, setLoading] = useState(true);
   const [mensaje, setMensaje] = useState("");
-
+  const navigate = useNavigate(); // Hook para redirigir
+  
   // Obtener asistencias al cargar el componente
   useEffect(() => {
     const fetchAsistencias = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/asistencia");
+        const response = await axios.get(
+          "http://localhost:5000/api/asistencia"
+        );
         setAsistencias(response.data);
         setLoading(false);
       } catch (error) {
@@ -24,6 +29,7 @@ const ListarAsistencias = () => {
       }
     };
 
+    //recupera alumnos
     const fetchAlumnos = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/alumnos");
@@ -45,7 +51,9 @@ const ListarAsistencias = () => {
       if (fechaInicio) params.fechaInicio = fechaInicio;
       if (fechaFin) params.fechaFin = fechaFin;
 
-      const response = await axios.get("http://localhost:5000/api/asistencia", { params });
+      const response = await axios.get("http://localhost:5000/api/asistencia", {
+        params,
+      });
       setAsistencias(response.data);
     } catch (error) {
       console.error("Error al filtrar asistencias:", error);
@@ -55,10 +63,32 @@ const ListarAsistencias = () => {
 
   const formatearFechaUTC = (fecha) => {
     const date = new Date(fecha);
-    const dia = date.getUTCDate().toString().padStart(2, '0'); // Día en UTC
-    const mes = (date.getUTCMonth() + 1).toString().padStart(2, '0'); // Mes en UTC (0 indexado)
+    const dia = date.getUTCDate().toString().padStart(2, "0"); // Día en UTC
+    const mes = (date.getUTCMonth() + 1).toString().padStart(2, "0"); // Mes en UTC (0 indexado)
     const anio = date.getUTCFullYear(); // Año en UTC
     return `${dia}/${mes}/${anio}`;
+  };
+
+  //borrar asistencia
+  const handleDelete = async (idAsistencia) => {
+    if (
+      !window.confirm("¿Estás seguro de que deseas eliminar esta asistencia?")
+    ) {
+      return;
+    }
+
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/asistencia/editar/${idAsistencia}`
+      );
+      setMensaje("Asistencia eliminada correctamente.");
+      setAsistencias(
+        asistencias.filter((asistencia) => asistencia._id !== idAsistencia)
+      );
+    } catch (error) {
+      console.error("Error al eliminar asistencia:", error);
+      setMensaje("Ocurrió un error al intentar eliminar la asistencia.");
+    }
   };
 
   if (loading) return <p>Cargando asistencias...</p>;
@@ -91,7 +121,7 @@ const ListarAsistencias = () => {
           </div>
           <div className="col-md-3">
             <label htmlFor="fechaInicio" className="form-label">
-              Fecha Inicio
+              Fecha Desde
             </label>
             <input
               type="date"
@@ -103,7 +133,7 @@ const ListarAsistencias = () => {
           </div>
           <div className="col-md-3">
             <label htmlFor="fechaFin" className="form-label">
-              Fecha Fin
+              Fecha Hasta
             </label>
             <input
               type="date"
@@ -133,20 +163,38 @@ const ListarAsistencias = () => {
               <th>Fecha</th>
               <th>Moldes</th>
               <th>Observaciones</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {asistencias.map((asistencia) => (
-              console.log(asistencia.fecha),
-              <tr key={asistencia._id}>
-                <td>
-                  {asistencia.alumno.nombre} {asistencia.alumno.apellido}
-                </td>
-                <td>{formatearFechaUTC(asistencia.fecha)}</td>
-                <td>{asistencia.molde}</td>
-                <td>{asistencia.observaciones || "N/A"}</td>
-              </tr>
-            ))}
+            {asistencias.map(
+              (asistencia) => (
+                (
+                  <tr key={asistencia._id}>
+                    <td>
+                      {asistencia.alumno.nombre} {asistencia.alumno.apellido}
+                    </td>
+                    <td>{formatearFechaUTC(asistencia.fecha)}</td>
+                    <td>{asistencia.molde}</td>
+                    <td>{asistencia.observaciones || "Sin observaciones"}</td>
+                    <td>
+                    <button
+                  className="btn btn-warning btn-sm me-2"
+                  onClick={() => navigate(`/asistencia/editar/${asistencia._id}`)}
+                >
+                  Editar
+                </button>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDelete(asistencia._id)}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                )
+              )
+            )}
           </tbody>
         </table>
       ) : (

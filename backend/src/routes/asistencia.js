@@ -40,9 +40,8 @@ router.post('/:idAlumno', async (req, res) => {
   }
 });
 
-
 // Obtener todas las asistencias de un alumno
-router.get('/:idAlumno', async (req, res) => {
+router.get('/alumno/:idAlumno', async (req, res) => {
   try {
     const { idAlumno } = req.params;
 
@@ -58,30 +57,70 @@ router.get('/:idAlumno', async (req, res) => {
 });
 
 // Eliminar una asistencia
-router.delete('/:idAlumno/:idAsistencia', async (req, res) => {
+router.delete('/:idAsistencia', async (req, res) => {
   try {
-    const { idAlumno, idAsistencia } = req.params;
+    const { idAsistencia } = req.params;
 
-    const alumno = await Alumno.findById(idAlumno);
-    if (!alumno) {
-      return res.status(404).json({ mensaje: 'Alumno no encontrado' });
-    }
-
-    // Eliminar la asistencia de la colección Asistencia
+    // Buscar y eliminar la asistencia
     const asistenciaEliminada = await Asistencia.findByIdAndDelete(idAsistencia);
     if (!asistenciaEliminada) {
       return res.status(404).json({ mensaje: 'Asistencia no encontrada' });
     }
 
-    // Quitar la asistencia del array de asistencias del alumno
-    alumno.asistencias = alumno.asistencias.filter(
-      (asistenciaId) => asistenciaId.toString() !== idAsistencia
+    // Opcional: Si la asistencia está vinculada a un alumno, también puedes quitarla del array de asistencias del alumno.
+    await Alumno.updateMany(
+      { asistencias: idAsistencia },
+      { $pull: { asistencias: idAsistencia } }
     );
-    await alumno.save();
 
-    res.json({ mensaje: 'Asistencia eliminada correctamente', asistencia: asistenciaEliminada });
+    res.json({ mensaje: 'Asistencia eliminada correctamente' });
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al eliminar la asistencia', error });
+  }
+});
+
+// Obtener una asistencia por ID
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const asistencia = await Asistencia.findById(id);
+
+    if (!asistencia) {
+      return res.status(404).json({ message: "Asistencia no encontrada" });
+    }
+
+    res.status(200).json(asistencia);
+  } catch (error) {
+    console.error("Error al obtener la asistencia:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
+});
+
+// Ruta para editar una asistencia por su ID
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { fecha, molde, observaciones } = req.body; // Datos que se van a actualizar
+
+  try {
+    // Buscar y actualizar la asistencia
+    const asistenciaActualizada = await Asistencia.findByIdAndUpdate(
+      id,
+      { fecha, molde, observaciones },
+      { new: true, runValidators: true } // Retornar el documento actualizado y validar los cambios
+    );
+
+    if (!asistenciaActualizada) {
+      return res.status(404).json({ message: "Asistencia no encontrada" });
+    }
+
+    res.status(200).json({
+      message: "Asistencia actualizada correctamente",
+      asistencia: asistenciaActualizada,
+    });
+  } catch (error) {
+    console.error("Error al actualizar la asistencia:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
   }
 });
 
