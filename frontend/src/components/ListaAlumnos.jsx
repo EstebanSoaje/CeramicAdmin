@@ -1,0 +1,96 @@
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+
+const ListaAlumnos = () => {
+  const [alumnos, setAlumnos] = useState([]);
+  const [filtro, setFiltro] = useState("");
+
+  useEffect(() => {
+    // Cargar la lista de alumnos desde el backend
+    axios
+      .get("http://localhost:5000/api/alumnos")
+      .then((response) => {
+        setAlumnos(response.data);
+      })
+      .catch((error) => {
+        console.error("Error al cargar los alumnos:", error);
+      });
+  }, []);
+
+  const handleFiltroChange = (event) => {
+    setFiltro(event.target.value);
+  };
+
+  const accionesAlumnos = (alumno) => {
+    if (window.location.pathname === "/alumnos") {
+      return (
+        <td>
+          <Link to={`/alumnos/${alumno._id}`} className="btn ">
+            Ver Detalles
+          </Link>
+          <Link to={`/alumno/editar/${alumno._id}`} className="btn ">
+            Editar
+          </Link>
+          <button
+            onClick={() => handleEliminar(alumno._id)}
+            className="btn btn-danger btn-sm"
+          >
+            Eliminar
+          </button>
+        </td>
+      );
+    } else {
+      return <td>💰🔴☝️🟢</td>;
+    }
+  };
+
+  const alumnosFiltrados = alumnos.filter((alumno) =>
+    alumno.nombre.toLowerCase().includes(filtro.toLowerCase())
+  );
+
+  // Manejo de la eliminación de alumnos
+  const handleEliminar = async (id) => {
+    if (window.confirm("¿Estás seguro de eliminar este alumno?")) {
+      try {
+        await axios.delete(`http://localhost:5000/api/alumnos/${id}`);
+        setAlumnos(alumnos.filter((alumno) => alumno._id !== id));
+      } catch (error) {
+        console.error("Error al eliminar el alumno:", error);
+      }
+    }
+  };
+
+  return (
+    <>
+      <input
+        type="text"
+        placeholder="Buscar alumno por nombre"
+        value={filtro}
+        onChange={handleFiltroChange}
+      />
+
+        <table className="striped" >
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody> 
+            {alumnosFiltrados.map((alumno) => (
+            <tr key={alumno._id}>
+              <td>{alumno.nombre}</td>
+              <td>{alumno.apellido}</td>
+              <td>{accionesAlumnos(alumno)}</td>
+            </tr>
+            ))}
+            </tbody>
+        </table>
+    
+    </>
+  );
+};
+
+export default ListaAlumnos;
