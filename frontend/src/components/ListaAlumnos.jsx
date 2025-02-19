@@ -26,15 +26,15 @@ const ListaAlumnos = () => {
     if (window.location.pathname === "/alumnos") {
       return (
         <td>
-          <Link to={`/alumnos/${alumno._id}`} className="btn ">
+          <Link to={`/alumnos/ver/${alumno._id}`} className="btn">
             Ver Detalles
           </Link>
-          <Link to={`/alumno/editar/${alumno._id}`} className="btn ">
+          <Link to={`/alumnos/editar/${alumno._id}`} className="btn">
             Editar
           </Link>
           <button
             onClick={() => handleEliminar(alumno._id)}
-            className="btn btn-danger btn-sm"
+            className="btn"
           >
             Eliminar
           </button>
@@ -70,7 +70,7 @@ const ListaAlumnos = () => {
         onChange={handleFiltroChange}
       />
 
-        <table className="striped" >
+        <table className="striped centered" >
           <thead>
             <tr>
               <th>Nombre</th>
@@ -83,12 +83,14 @@ const ListaAlumnos = () => {
             <tr key={alumno._id}>
               <td>{alumno.nombre}</td>
               <td>{alumno.apellido}</td>
-              <td>{accionesAlumnos(alumno)}</td>
+              {accionesAlumnos(alumno)}
             </tr>
             ))}
             </tbody>
         </table>
-    
+        <Link to={`/alumnos/crear`} className="btn">
+            Crear Alumno
+          </Link>
     </>
   );
 };
