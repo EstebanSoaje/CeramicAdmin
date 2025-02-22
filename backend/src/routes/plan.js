@@ -3,7 +3,7 @@ const router = express.Router();
 const Plan = require('../models/plan');
 
 // Crear un nuevo plan
-router.post('/', async (req, res) => {
+router.post('/crear', async (req, res) => {
   try {
     const { nombre, precio, moldes, clases, descripcion } = req.body;
 
