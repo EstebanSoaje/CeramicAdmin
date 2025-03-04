@@ -10,6 +10,7 @@ const AlumnoForm = () => {
     apellido: "",
     email: "",
     telefono: "",
+    plan: ""
   });
   const [loading, setLoading] = useState(true);
   const [editable, setEditable] = useState(true);

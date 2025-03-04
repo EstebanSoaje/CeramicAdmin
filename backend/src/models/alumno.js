@@ -6,6 +6,7 @@ const AlumnoSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, match: /.+\@.+\..+/ }, //comprueba que sea unico
   telefono: { type: String, required: true, match: /^[0-9]{10,15}$/ }, //comprueba que sea valido
   fechaRegistro: { type: Date, required: true, default: Date.now },
+  plan: {  type: mongoose.Schema.Types.ObjectId, ref: 'Plan',},
   pagos: [
     {
       type: mongoose.Schema.Types.ObjectId,

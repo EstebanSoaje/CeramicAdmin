@@ -11,7 +11,7 @@ router.post('/crear', async (req, res) => {
       nombre,
       apellido,
       email,
-      telefono,
+      telefono
     });
 
     const alumnoGuardado = await nuevoAlumno.save();

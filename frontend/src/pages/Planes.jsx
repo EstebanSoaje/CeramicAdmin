@@ -23,7 +23,6 @@ const ListaPlanes = () => {
   };
 
   const accionesPlanes = (plan) => {
-    if (window.location.pathname === "/planes") {
       return (
         <td>
           <Link to={`/planes/ver/${plan._id}`} className="btn">
@@ -40,9 +39,6 @@ const ListaPlanes = () => {
           </button>
         </td>
       );
-    } else {
-      return <td>💰🔴☝️🟢</td>;
-    }
   };
 
   const planesFiltrados = planes.filter((plan) =>
